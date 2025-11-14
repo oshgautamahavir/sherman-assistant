@@ -133,8 +133,9 @@ SUPABASE_KEY = os.getenv('SUPABASE_KEY', '')
 
 # OpenAI Configuration
 OPENAI_KEY = os.getenv('OPENAI_KEY', '')
+OPENAI_ORGANIZATION = os.getenv('OPENAI_ORGANIZATION', '')
 
 # Pinecone Configuration
 PINECONE_KEY = os.getenv('PINECONE_KEY', '')
 PINECONE_ENVIRONMENT = os.getenv('PINECONE_ENVIRONMENT', '')
-PINECONE_INDEX_NAME = os.getenv('PINECONE_INDEX_NAME', 'sherman-assistant')
+PINECONE_INDEX_NAME = os.getenv('PINECONE_INDEX', '')
