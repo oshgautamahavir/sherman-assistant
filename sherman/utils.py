@@ -123,6 +123,7 @@ def upsert_chunks_to_pinecone(
             chunk_metadata = {
                 **metadata,
                 'chunk_index': i,
+                'text': chunk
             }
             
             vectors_to_upsert.append({
@@ -146,3 +147,87 @@ def upsert_chunks_to_pinecone(
             print(f"Error upserting batch: {e}")
     
     return upserted_count
+
+
+def search_similar_chunks(
+    pinecone_index: Pinecone,
+    question_embedding: List[float],
+) -> List[Dict]:
+        results = pinecone_index.query(
+            vector=question_embedding,
+            include_metadata=True,
+            top_k=5
+        )
+        
+        matched_chunks = []
+        for match in results.matches:
+            if match.score >= 0.0:
+                matched_chunks.append({
+                    'id': match.id,
+                    'score': match.score,
+                    'text': match.metadata.get('text', ''),
+                    'url': match.metadata.get('url', ''),
+                    'title': match.metadata.get('title', ''),
+                    'chunk_index': match.metadata.get('chunk_index', 0),
+                    'metadata': match.metadata
+                })
+        
+        return matched_chunks
+
+
+def build_context(similar_chunks: List[Dict]) -> str:
+    chunks_by_url = {}
+    for chunk in similar_chunks:
+        chunk_text = chunk.get('text', '')
+        url = chunk.get('url', '')
+        title = chunk.get('title', '')
+
+        if chunk_text:
+            if url not in chunks_by_url:
+                chunks_by_url[url] = {
+                    'title': title,
+                    'chunks': []
+                }
+            chunks_by_url[url]['chunks'].append(chunk_text)
+    
+    # Build context string grouped by URL
+    context_parts = []
+    for url, data in chunks_by_url.items():
+        title = data['title']
+        chunks = data['chunks']
+        
+        context_parts.append(f"Source: {title} ({url})")
+        
+        context_parts.extend(chunks)
+        context_parts.append("")
+    
+    return '\n\n'.join(context_parts).strip()
+
+
+def extract_source_urls(answer: str) -> List[str]:
+    pattern = r'https?://[^\s\n]+'
+    matches = re.findall(pattern, answer)
+
+    urls = []
+    for url in matches:
+        url = url.strip()
+        url = url.rstrip('.,;:!?)')
+        if url:
+            urls.append(url)
+
+    return urls
+
+
+def save_chat_exchange(
+    question: str,
+    answer: str,
+    source_urls: List[str],
+    supabase_client
+) -> bool:
+    data = {
+        'question': question,
+        'answer': answer,
+        'source_urls': source_urls,
+    }
+
+    supabase_client.table("chat_exchanges").insert(data).execute()

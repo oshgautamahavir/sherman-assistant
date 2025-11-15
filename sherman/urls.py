@@ -5,6 +5,6 @@ app_name = 'sherman'
 
 urlpatterns = [
     path('scrape/', views.scrape_api, name='scrape_api'),
-    # Add your API endpoints here
+    path('chat/', views.chat_api, name='chat_api'),
 ]
 

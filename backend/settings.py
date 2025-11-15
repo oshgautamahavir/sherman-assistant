@@ -139,3 +139,7 @@ OPENAI_ORGANIZATION = os.getenv('OPENAI_ORGANIZATION', '')
 PINECONE_KEY = os.getenv('PINECONE_KEY', '')
 PINECONE_ENVIRONMENT = os.getenv('PINECONE_ENVIRONMENT', '')
 PINECONE_INDEX_NAME = os.getenv('PINECONE_INDEX', '')
+
+# Chat Configuration
+MODEL = os.getenv('MODEL', '')
+EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', '')
