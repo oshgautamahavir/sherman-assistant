@@ -204,7 +204,7 @@ def build_context(similar_chunks: List[Dict]) -> str:
     return '\n\n'.join(context_parts).strip()
 
 
-def extract_source_urls(answer: str) -> List[str]:
+def extract_source_urls(answer: str) -> Tuple[str, List[str]]:
     pattern = r'https?://[^\s\n]+'
     matches = re.findall(pattern, answer)
 
@@ -214,8 +214,22 @@ def extract_source_urls(answer: str) -> List[str]:
         url = url.rstrip('.,;:!?)')
         if url:
             urls.append(url)
+    
+    # Remove URLs from the answer text
+    stripped_answer = answer
+    for url in urls:
+        # Remove the URL and any surrounding whitespace/newlines
+        # Handle URLs that might be on their own line or inline
+        stripped_answer = re.sub(r'\s*' + re.escape(url) + r'\s*\n?', ' ', stripped_answer)
+        stripped_answer = re.sub(r'\n?\s*' + re.escape(url) + r'\s*', ' ', stripped_answer)
+    
+    # Clean up extra whitespace and newlines
+    stripped_answer = re.sub(r'\n\s*\n+', '\n\n', stripped_answer)  # Multiple newlines to double
+    stripped_answer = re.sub(r'[ \t]+', ' ', stripped_answer)  # Multiple spaces to single
+    stripped_answer = re.sub(r'\n ', '\n', stripped_answer)  # Remove space after newline
+    stripped_answer = stripped_answer.strip()
 
-    return urls
+    return stripped_answer, urls
 
 
 def save_chat_exchange(

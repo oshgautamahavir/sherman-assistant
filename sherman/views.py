@@ -146,18 +146,18 @@ def chat_api(request):
 
         answer = response.choices[0].message.content.strip()
 
-        source_urls = extract_source_urls(answer)
+        stripped_answer, source_urls = extract_source_urls(answer)
         
         save_chat_exchange(
             question=question,
-            answer=answer,
+            answer=stripped_answer,
             source_urls=source_urls,
             supabase_client=supabase_client
         )
 
         return JsonResponse({
             'status': 200,
-            'answer': answer,
+            'answer': stripped_answer,
             'question': question,
             'source_urls': source_urls
         })
