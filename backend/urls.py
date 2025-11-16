@@ -37,7 +37,7 @@ if not settings.DEBUG:
                 'document_root': str(frontend_dir / 'assets'),
             }),
         ]
-        
+
         # Serve index.html for all non-API routes (SPA routing)
         urlpatterns += [
             re_path(r'^(?!api|admin|static|assets).*$', serve, {

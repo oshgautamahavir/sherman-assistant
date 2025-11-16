@@ -8,4 +8,3 @@ urlpatterns = [
     path('chat/', views.chat_api, name='chat_api'),
     path('history/', views.history_api, name='history_api')
 ]
-
