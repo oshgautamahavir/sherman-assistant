@@ -22,24 +22,10 @@ def fetch_and_parse_html(url: str) -> Tuple[Optional[str], Optional[str]]:
     title_text = title.get_text(strip=True) if title else "No Title"
     
     main_content = None
-    content_selectors = [
-        'main', 'article', '[role="main"]', 
-        '.content', '.main-content', '#content',
-        '.post-content', '.entry-content'
-    ]
     
-    for selector in content_selectors:
-        content = soup.select_one(selector)
-        if content:
-            main_content = content.get_text(separator=' ', strip=True)
-            break
-    
-    if not main_content:
-        body = soup.find('body')
-        if body:
-            for script in body(["script", "style", "nav", "footer", "header"]):
-                script.decompose()
-            main_content = body.get_text(separator=' ', strip=True)
+    content_elements = soup.select('article')
+    all_texts = [elem.get_text(separator=' ', strip=True) for elem in content_elements]
+    main_content = ' '.join(all_texts)
     
     return title_text, main_content
 
