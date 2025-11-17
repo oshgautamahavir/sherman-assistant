@@ -130,9 +130,14 @@ def chat_api(request):
     2. At the end of your answer, include all source URLs, separated by new lines
     3. Format: https://example.com/page1 \nhttps://example.com/page2
     4. Include one or more URLs depending on how many sources from the context were used
+    5. If no context can be found, suggest either of these four destinations: Alaska, Caribbean, Hawaiian Islands, or Northern Europe and cite the source URL from these urls:
+        'https://www.shermanstravel.com/cruise-destinations/alaska-itineraries',
+        'https://www.shermanstravel.com/cruise-destinations/caribbean-and-bahamas',
+        'https://www.shermanstravel.com/cruise-destinations/hawaiian-islands',
+        'https://www.shermanstravel.com/cruise-destinations/northern-europe'
 
     Example format:
-    Your answer text here. https://www.shermanstravel.com/cruise-destinations/alaska \nhttps://www.shermanstravel.com/cruise-destinations/caribbean
+    Your answer text here. https://www.shermanstravel.com/cruise-destinations/alaska-itineraries \nhttps://www.shermanstravel.com/cruise-destinations/caribbean-and-bahamas
     """
         response = openai_client.chat.completions.create(
             model=settings.MODEL,

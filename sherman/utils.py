@@ -147,7 +147,7 @@ def search_similar_chunks(
         
         matched_chunks = []
         for match in results.matches:
-            if match.score >= 0.0:
+            if match.score >= 0.1:
                 matched_chunks.append({
                     'id': match.id,
                     'score': match.score,
